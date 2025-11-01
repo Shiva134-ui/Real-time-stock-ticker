@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Real-Time Stock Ticker — Dashboard</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <h1>Real-Time Stock Ticker</h1>
+      <div class="top-actions">
+        <span id="status">Status: <strong id="conn">disconnected</strong></span>
+        <button id="darkToggle" aria-pressed="false">🌙 Dark</button>
+      </div>
+    </header>
+
+    <nav class="tabs">
+      <button data-tab="dashboard" class="active">Dashboard</button>
+      <button data-tab="chart">Stock Chart</button>
+      <button data-tab="portfolio">Portfolio</button>
+    </nav>
+
+    <main>
+      <section id="dashboard" class="panel">
+        <div class="controls">
+          <button id="refresh">Refresh</button>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <h3>Market Snapshot</h3>
+            <table class="stocks-table">
+              <thead><tr><th>Symbol</th><th>Price</th><th>Change</th></tr></thead>
+              <tbody id="stocks"></tbody>
+            </table>
+          </div>
+
+          <div class="card">
+            <h3>Quick Stats</h3>
+            <div id="quickStats">—</div>
+          </div>
+
+          <div class="card">
+            <h3>News & Alerts</h3>
+            <div id="newsFeed">Loading news...</div>
+            <form id="addAlert">
+              <input id="alertSymbol" placeholder="Symbol for alert" />
+              <input id="alertPrice" type="number" step="0.01" placeholder="Price threshold" />
+              <button type="submit">Add Alert</button>
+            </form>
+            <div id="alertList"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="chart" class="panel hidden">
+        <div class="card full">
+          <div class="chart-header">
+            <div>
+              <label for="chartSymbol">Symbol:</label>
+              <select id="chartSymbol"></select>
+              <button id="chartZoom">Reset</button>
+            </div>
+            <div id="chartMeta"></div>
+          </div>
+          <canvas id="priceChart" height="200"></canvas>
+        </div>
+      </section>
+
+      <section id="portfolio" class="panel hidden">
+        <div class="card full">
+          <h3>Portfolio Tracker</h3>
+          <form id="addPosition">
+            <input id="posSymbol" placeholder="Symbol (e.g. AAPL)" required />
+            <input id="posShares" type="number" step="0.01" placeholder="Shares" required />
+            <button type="submit">Add / Update</button>
+          </form>
+          <div id="portfolioList"></div>
+          <div id="portfolioSummary"></div>
+        </div>
+      </section>
+    </main>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="/main.js"></script>
+  </body>
+</html>
