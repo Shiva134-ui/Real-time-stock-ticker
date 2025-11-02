@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MarketPulse — Real-Time Stock Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="container">
+    <header class="app-header">
+      <h1>Market<span class="highlight">Pulse</span></h1>
+      <div class="header-controls">
+        <button 
+          id="themeToggle" 
+          class="icon-btn" 
+          aria-label="Toggle theme"
+          title="Toggle dark/light mode"
+        >
+          <span class="icon" aria-hidden="true">🌙</span>
+        </button>
+      </div>
+    </header>
+
+    <section class="controls-section" aria-labelledby="controls-heading">
+      <h2 id="controls-heading" class="sr-only">Stock Controls</h2>
+      <div class="input-group">
+        <label for="stockInput" class="sr-only">Enter stock symbol</label>
+        <input 
+          type="text" 
+          id="stockInput" 
+          placeholder="e.g., AAPL, MSFT" 
+          maxlength="5"
+          title="Enter stock symbol (1-5 uppercase letters)"
+          aria-describedby="symbol-help"
+        />
+        <div id="symbol-help" class="sr-only">Stock symbols are 1–5 uppercase letters</div>
+        <button 
+          id="addStockBtn"
+          aria-label="Add stock to watchlist"
+          title="Add stock to watchlist"
+        >➕ Add</button>
+      </div>
+      <div class="action-buttons">
+        <button id="pauseBtn" aria-label="Pause updates" title="Pause live updates">⏸️ Pause</button>
+        <button id="resumeBtn" aria-label="Resume updates" title="Resume live updates">▶️ Resume</button>
+        <button id="refreshBtn" aria-label="Refresh now" title="Refresh data now">🔄 Refresh</button>
+        <button id="clearBtn" aria-label="Clear watchlist" title="Clear all stocks">🗑️ Clear</button>
+      </div>
+    </section>
+
+    <p id="status" class="status" role="status" aria-live="polite">Fetching real-time data...</p>
+
+    <section class="ticker-container" aria-labelledby="ticker-heading">
+      <h2 id="ticker-heading" class="sr-only">Live Stock Ticker</h2>
+      <ul class="ticker" id="ticker" aria-label="Live stock prices scrolling ticker"></ul>
+    </section>
+
+    <section class="watchlist-section" aria-labelledby="watchlist-heading">
+      <div class="watchlist-header">
+        <h2 id="watchlist-heading">Your Watchlist (<span id="watchlistCount">0</span>)</h2>
+      </div>
+      <div class="watchlist-grid" id="watchlistGrid" role="list" aria-label="Stock watchlist"></div>
+    </section>
+
+    <footer>
+      <p>Live data via Alpha Vantage • Updates every 60s</p>
+    </footer>
+  </div>
+
+  <div class="sr-only">MarketPulse: Real-time stock dashboard</div>
+  <script src="script.js"></script>
+</body>
+</html>
