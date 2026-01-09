@@ -1,75 +1,120 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MarketPulse — Real-Time Stock Dashboard</title>
+
+  <!-- Google Fonts: Outfit for Headings, Inter for UI -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;700;800&display=swap"
+    rel="stylesheet">
+
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
-  <div class="container">
+  <canvas id="particleCanvas" class="background-globes"></canvas>
+  <div class="glass-overlay"></div>
+
+  <div class="container relative-z">
     <header class="app-header">
-      <h1>Market<span class="highlight">Pulse</span></h1>
+      <div class="brand">
+        <h1>Market<span class="highlight">Pulse</span></h1>
+        <div class="live-indicator">
+          <span class="pulse-dot"></span> Live Market
+        </div>
+      </div>
+
+      <!-- Wallet Section -->
+      <div class="wallet-info glass-panel">
+        <span class="wallet-label">Buying Power</span>
+        <span class="wallet-balance" id="walletBalance">$10,000.00</span>
+        <span class="wallet-pnl" id="portfolioPnL">+$0.00 (0.00%)</span>
+      </div>
+
       <div class="header-controls">
-        <button 
-          id="themeToggle" 
-          class="icon-btn" 
-          aria-label="Toggle theme"
-          title="Toggle dark/light mode"
-        >
+        <button id="themeToggle" class="icon-btn glass-btn" aria-label="Toggle theme" title="Toggle dark/light mode">
           <span class="icon" aria-hidden="true">🌙</span>
         </button>
       </div>
     </header>
 
-    <section class="controls-section" aria-labelledby="controls-heading">
+    <div class="news-ticker glass-panel">
+      <div class="news-label">BREAKING</div>
+      <div class="news-track" id="newsTrack">
+        <!-- News items injected via JS -->
+      </div>
+    </div>
+
+    <!-- View Toggle -->
+    <div class="view-controls">
+      <button id="viewMarketBtn" class="view-btn active">Market Watch</button>
+      <button id="viewPortfolioBtn" class="view-btn">My Portfolio</button>
+    </div>
+
+    <section class="controls-section glass-panel" aria-labelledby="controls-heading">
       <h2 id="controls-heading" class="sr-only">Stock Controls</h2>
       <div class="input-group">
         <label for="stockInput" class="sr-only">Enter stock symbol</label>
-        <input 
-          type="text" 
-          id="stockInput" 
-          placeholder="e.g., AAPL, MSFT" 
-          maxlength="5"
-          title="Enter stock symbol (1-5 uppercase letters)"
-          aria-describedby="symbol-help"
-        />
-        <div id="symbol-help" class="sr-only">Stock symbols are 1–5 uppercase letters</div>
-        <button 
-          id="addStockBtn"
-          aria-label="Add stock to watchlist"
-          title="Add stock to watchlist"
-        >➕ Add</button>
+        <div class="input-wrapper">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="stockInput" placeholder="Search symbol (e.g., AAPL)" maxlength="5"
+            autocomplete="off" />
+        </div>
+        <button id="addStockBtn" class="primary-btn" aria-label="Add stock to watchlist">
+          <span>Add Stock</span>
+        </button>
       </div>
       <div class="action-buttons">
-        <button id="pauseBtn" aria-label="Pause updates" title="Pause live updates">⏸️ Pause</button>
-        <button id="resumeBtn" aria-label="Resume updates" title="Resume live updates">▶️ Resume</button>
-        <button id="refreshBtn" aria-label="Refresh now" title="Refresh data now">🔄 Refresh</button>
-        <button id="clearBtn" aria-label="Clear watchlist" title="Clear all stocks">🗑️ Clear</button>
+        <button id="pauseBtn" class="glass-btn" title="Pause live updates">⏸️</button>
+        <button id="resumeBtn" class="glass-btn" title="Resume live updates">▶️</button>
+        <button id="refreshBtn" class="glass-btn" title="Refresh data now">🔄</button>
+        <button id="clearBtn" class="glass-btn danger-hover" title="Clear all stocks">🗑️</button>
       </div>
     </section>
 
-    <p id="status" class="status" role="status" aria-live="polite">Fetching real-time data...</p>
+    <div class="status-bar">
+      <p id="status" class="status-text" role="status" aria-live="polite">System Ready</p>
+    </div>
 
-    <section class="ticker-container" aria-labelledby="ticker-heading">
+    <section class="ticker-container glass-panel" aria-labelledby="ticker-heading">
       <h2 id="ticker-heading" class="sr-only">Live Stock Ticker</h2>
-      <ul class="ticker" id="ticker" aria-label="Live stock prices scrolling ticker"></ul>
+      <div class="ticker-mask">
+        <ul class="ticker" id="ticker" aria-label="Live stock prices scrolling ticker"></ul>
+      </div>
     </section>
 
     <section class="watchlist-section" aria-labelledby="watchlist-heading">
       <div class="watchlist-header">
-        <h2 id="watchlist-heading">Your Watchlist (<span id="watchlistCount">0</span>)</h2>
+        <h2 id="watchlist-heading">Watchlist <span class="count-badge" id="watchlistCount">0</span></h2>
       </div>
-      <div class="watchlist-grid" id="watchlistGrid" role="list" aria-label="Stock watchlist"></div>
+      <div class="watchlist-grid" id="watchlistGrid" role="list"></div>
     </section>
 
     <footer>
-      <p>Live data via Alpha Vantage • Updates every 60s</p>
+      <p>Powered by <span class="provider">Alpha Vantage</span> • Virtual Trading Simulator</p>
     </footer>
   </div>
 
-  <div class="sr-only">MarketPulse: Real-time stock dashboard</div>
+  <!-- Stock Detail Modal -->
+  <div id="stockModal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal-glass">
+      <button id="closeModal" class="modal-close">&times;</button>
+      <div class="modal-content" id="modalContent">
+        <!-- Content injected via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
   <script src="script.js"></script>
 </body>
+
 </html>
